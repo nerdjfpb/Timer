@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Stopwatch.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Stopwatch.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  watchSwitchToggle,
+  currentWatchTime,
+  watchStartInitial,
+  watchRunning,
+  markerAdd,
+  initialStage
+} from '../actions'
+import MarkerModel from './MarkerModal'
+import { Button, Icon } from 'antd'
+import './Stopwatch.css'
+
+/**
+ * Stopwatch Component
+ * This is a stateless component using hooks and redux.
+ *
+ *
+ * @return {reactElement} - marker modal
+ *
+ * @example
+ *
+ *     import Stopwatch from 'location'
+ */
+export default () => {
+  /**
+   * startWatch
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     startWatch()
+   */
+  const startWatch = () => {
+    dispatch(watchSwitchToggle())
+    dispatch(currentWatchTime())
+    dispatch(watchStartInitial())
+
+    setInterval(() => {
+      dispatch(watchRunning())
+    }, 10)
+  }
+  /**
+   * pauseWatch
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     pauseWatch()
+   */
+  const pauseWatch = () => {
+    dispatch(watchSwitchToggle())
+    for (var i = 1; i &lt; 99999; i++) window.clearInterval(i)
+  }
+  /**
+   * resetWatch
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     resetWatch()
+   */
+  const resetWatch = () => {
+    dispatch(initialStage())
+  }
+  /**
+   * markTime
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     markTime()
+   */
+  const markTime = () => {
+    setVisible(true)
+    const time = hours + ': ' + minutes + ': ' + seconds + ': ' + centiseconds
+    setStoreTime(time)
+  }
+  /**
+   * addMarkTime
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     addMarkTime()
+   */
+  const addMarkTime = () => {
+    if (markNote.trim() === '') return
+    const payload = {
+      time: storeTime,
+      note: markNote
+    }
+    dispatch(markerAdd(payload))
+    setMarkNote('')
+    setVisible(false)
+  }
+  /**
+   * handleCancel
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     handleCancel()
+   */
+  const handleCancel = () => {
+    setVisible(false)
+  }
+  /**
+   * onChange
+   * This is an arrow function.
+   *
+   *
+   * @example
+   *
+   *     onChange()
+   */
+  const onChange = event => {
+    setMarkNote(event.target.value)
+  }
+  const watchSwitch = useSelector(state => state.timerState.watchSwitch)
+  const watchTime = useSelector(state => state.timerState.watchTime)
+  const dispatch = useDispatch()
+  let centiseconds = ('0' + (Math.floor(watchTime / 10) % 100)).slice(-2)
+  let seconds = ('0' + (Math.floor(watchTime / 1000) % 60)).slice(-2)
+  let minutes = ('0' + (Math.floor(watchTime / 60000) % 60)).slice(-2)
+  let hours = ('0' + Math.floor(watchTime / 3600000)).slice(-2)
+  const [visible, setVisible] = useState(false)
+  const [markNote, setMarkNote] = useState('')
+  const [storeTime, setStoreTime] = useState('')
+  return (
+    &lt;div className="stopwatch">
+      &lt;div className="stopwatch-time">
+        {hours} : {minutes} : {seconds} : {centiseconds}
+      &lt;/div>
+      {watchSwitch === false &amp;&amp; watchTime === 0 &amp;&amp; (
+        &lt;Button type="default" onClick={startWatch}>
+          Start &lt;Icon type="clock-circle" theme="filled" />
+        &lt;/Button>
+      )}
+      {watchSwitch === true &amp;&amp; (
+        &lt;React.Fragment>
+          &lt;Button type="danger" onClick={pauseWatch}>
+            Pause &lt;Icon type="pause-circle" theme="filled" />
+          &lt;/Button>
+          &lt;Button type="default" onClick={markTime}>
+            Mark &lt;Icon type="book" theme="filled" />
+          &lt;/Button>
+          &lt;MarkerModel
+            storeTime={storeTime}
+            visible={visible}
+            addMarkTime={addMarkTime}
+            handleCancel={handleCancel}
+            onChange={onChange}
+            markNote={markNote}
+          />
+        &lt;/React.Fragment>
+      )}
+      {watchSwitch === false &amp;&amp; watchTime > 0 &amp;&amp; (
+        &lt;Button type="primary" onClick={startWatch}>
+          Resume &lt;Icon type="play-circle" theme="filled" />
+        &lt;/Button>
+      )}
+      {watchSwitch === false &amp;&amp; watchTime > 0 &amp;&amp; (
+        &lt;Button type="danger" onClick={resetWatch}>
+          Reset &lt;Icon type="reload" />
+        &lt;/Button>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#currentWatchTime">currentWatchTime</a></li><li><a href="global.html#initialStage">initialStage</a></li><li><a href="global.html#markerAdd">markerAdd</a></li><li><a href="global.html#markerDelete">markerDelete</a></li><li><a href="global.html#markerState">markerState</a></li><li><a href="global.html#timerState">timerState</a></li><li><a href="global.html#watchRunning">watchRunning</a></li><li><a href="global.html#watchStartInitial">watchStartInitial</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Jan 20 2020 22:07:14 GMT+0600 (Bangladesh Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
