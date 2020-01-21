@@ -8,7 +8,7 @@ A simple timer where user can mark time a note.
 
 ## Screenshot
 
-![Screenshot](./Screenshot_1.jpg)
+![Screenshot](./Screenshot_1.png)
 
 ## How to run the code ?
 
